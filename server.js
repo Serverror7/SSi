@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 
 app.listen(port, async ()=>{
-    console.log('Listening on port '+port);
+    console.log('Listening on port '+ port);
 });
 
 

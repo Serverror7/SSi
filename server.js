@@ -4,12 +4,21 @@ const {v4 : uuidv4} = require("uuid");
 const e = require("express");
 const port = 3000;
 const app = express();
+const {createClient} = require('redis');
+const md5 = require('md5');
+
+const redisClient = createClient(
+{
+    Url:"localhost:6379",
+}
+);
 
 app.use(bodyParser.json());
 
 
 app.listen(port, async ()=>{
-    console.log('Listening on port '+ port);
+    await redisClient.connect();
+    console.log('Listening on port '+port);
 });
 
 

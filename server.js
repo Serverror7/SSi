@@ -27,8 +27,12 @@ app.get("/", (req,res)=>{
 
 app.post('/user', async (req,res)=>{
     const newUserRequestObject = req.body;
+    const loginPassword = req.body.password;
+    const hash = md5(hash);
+    console.log(hash);
+    newUserRequestObject.password = hash;
+    newUserRequestObject.verifyPassword = hash;
     console.log('New User:',JSON.stringify(newUserRequestObject));
-    newUserRequestObject.password = md5(newUserRequestObject.password);
     redisClient.hSet('users',req.body.email,JSON.stringify(newUserRequestObject));
     res.send('New User'+newUserRequestObject.email+'added');
 });

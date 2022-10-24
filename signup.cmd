@@ -1,1 +1,1 @@
-curl -v -d "@newuser.json" -X POST -H "Content-Type:application/json" http://localhost:4043/user
+curl -v -d "@newuser.json" -X POST -H "Content-Type:application/json" https://benjaminmarsh.cit270.com/user

@@ -4,14 +4,14 @@ const https = require('https');
 const fs = require('fs');
 const {v4 : uuidv4} = require("uuid");
 const e = require("express");
-const port = 443;
+const port = 4043;
 const app = express();
 const {createClient} = require('redis');
 const md5 = require('md5');
 
 const redisClient = createClient(
 {
-    Url:"35.223.102.97",
+    url:"redis://default@35.223.102.97:6379",
 }
 );
 
@@ -28,8 +28,13 @@ https.createServer({
     ca: fs.readFileSync('chain.pem')
     
 }, app).listen(port, async () => {
-    await redisClient.connect();
-    console.log("Listening...");
+    console.log("Listening...")
+    try{
+        await redisClient.connect();
+        console.log('Listening...')}
+        catch(error){
+            console.log(error)
+    }
 });
 
 app.get("/", (req,res)=>{

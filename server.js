@@ -4,7 +4,7 @@ const https = require('https');
 const fs = require('fs');
 const {v4 : uuidv4} = require("uuid");
 const e = require("express");
-const port = 4043;
+const port = 443;
 const app = express();
 const {createClient} = require('redis');
 const md5 = require('md5');
@@ -23,9 +23,9 @@ app.use(bodyParser.json());
 // });
 
 https.createServer({
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.cert'),
-    ca: fs.readFileSync('chain.pem')
+    key: fs.readFileSync('./SSL/server.key'),
+    cert: fs.readFileSync('./SSL/server.cert'),
+    ca: fs.readFileSync('./SSL/chain.pem')
     
 }, app).listen(port, async () => {
     console.log("Listening...")
@@ -44,7 +44,7 @@ app.get("/", (req,res)=>{
 app.post('/user', async (req,res)=>{
     const newUserRequestObject = req.body;
     const loginPassword = req.body.password;
-    const hash = md5(hash);
+    const hash = md5(loginPassword);
     console.log(hash);
     newUserRequestObject.password = hash;
     newUserRequestObject.verifyPassword = hash;

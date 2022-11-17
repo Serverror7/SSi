@@ -17,6 +17,8 @@ const redisClient = createClient(
 
 app.use(bodyParser.json());
 
+app.use(express.static("public"))
+
 // app.listen(port, async ()=>{
 //     await redisClient.connect();
 //     console.log('Listening on port '+port);

@@ -10,17 +10,17 @@ const {createClient} = require('redis');
 const md5 = require('md5');
 const loginAttemptCount = {};
 
-const redisClient = createClient(
-{
-    url:'redis://localhost:6379',
-}
-);
-
 // const redisClient = createClient(
-//     {
-//         url:`redis://default:${process.env.REDIS_PASS}@redis-stedi-benjamin:6379`,
-//     }
-//     );
+// {
+//     url:'redis://localhost:6379',
+// }
+// );
+
+const redisClient = createClient(
+    {
+        url:`redis://default:${process.env.REDIS_PASS}@redis-stedi-benjamin:6379`,
+    }
+    );
 
 app.use(bodyParser.json());
 

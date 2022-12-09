@@ -8,12 +8,19 @@ const port = 443;
 const app = express();
 const {createClient} = require('redis');
 const md5 = require('md5');
+const loginAttemptCount = {};
 
 const redisClient = createClient(
 {
-    url:`redis://default:${process.env.REDIS_PASS}@redis-stedi-benjamin:6379`,
+    url:'redis://localhost:6379',
 }
 );
+
+// const redisClient = createClient(
+//     {
+//         url:`redis://default:${process.env.REDIS_PASS}@redis-stedi-benjamin:6379`,
+//     }
+//     );
 
 app.use(bodyParser.json());
 
@@ -39,9 +46,9 @@ https.createServer({
     }
 });
 
-app.get("/", (req,res)=>{
-    res.send("Hello World!")
-});
+// app.get("/", (req,res)=>{
+//     res.send("Hello World!")
+// });
 
 app.post('/user', async (req,res)=>{
     const newUserRequestObject = req.body;
@@ -56,7 +63,6 @@ app.post('/user', async (req,res)=>{
 });
 
 app.post("/login", async (req,res)=>{
-    
     const loginEmail = req.body.userName;
     console.log(JSON.stringify(req.body));
     console.log("loginEmail", loginEmail);
@@ -64,16 +70,27 @@ app.post("/login", async (req,res)=>{
     console.log("loginPassword", loginPassword);
     const userString = await redisClient.hGet("users", loginEmail);
     const userObject = JSON.parse(userString);
-    if (userString == "" || userString == null){
-        res.status(404);
-        res.send("User not found");
+    if (loginAttemptCount.userName == undefined){
+        loginAttemptCount.userName = 1
     }
-    else if (md5(loginPassword) == userObject.password){
-        const token = uuidv4();
-        res.send(token)
-        // if there is no status change it is all ok or 200
-    } else{
-        res.status(401);
-        res.send("Invalid user or password");
-    }    
-});
+    if (loginAttemptCount.userName > 3){
+        res.status(403);
+        res.send("Locked")
+        console.log(loginAttemptCount.userName, "Login attempts for user", loginEmail)
+    }
+    else{
+        if (userString == "" || userString == null){
+            res.status(404);
+            res.send("User not found");
+        }
+        else if (md5(loginPassword) == userObject.password){
+            const token = uuidv4();
+            res.send(token)
+            // if there is no status change it is all ok or 200
+        } else{
+            loginAttemptCount.userName += 1;
+            res.status(401);
+            res.send("Invalid user or password");
+        }
+    }
+    });
